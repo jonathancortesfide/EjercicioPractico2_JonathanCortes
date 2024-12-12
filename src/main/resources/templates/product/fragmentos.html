@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{layout/plantilla :: head}">
+        <title>Sala de Eventos</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet"></link>
+    
+    </head>
+    <body>
+        <!-- 1 Sección para crear el boton de agregar... llamará a una ventana modal-->
+        <section th:fragment="botonesAgregar" class="py-4 mb-4 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">   
+                        <button 
+                            type="button" 
+                            class="btn btn-primary btn-block" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#agregarEvento">
+                            <i class="fas fa-plus"></i> Añadir Evento
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2 Fragmento para agregar categoria, es la ventana modal -->
+        <section th:fragment="agregarEvento">
+            <div id="agregarEvento" 
+                 class="modal fade" 
+                 tabindex="-1" 
+                 aria-labelledby="exampleModalLabel" 
+                 aria-hidden="true">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info text-white">
+                            <h5 class="modal-title">Añadir Evento</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div> 
+                        <form th:action="@{/evento/guardar}" th:object="${evento}"
+                              method="POST" class="was-validated" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="name">Nombre</label>
+                                    <input type="text" class="form-control" name="nombre" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description">Description</label>
+                                    <input type="text" class="form-control" name="descripcion" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description">Tipo</label>
+                                    <input type="text" class="form-control" name="tipo" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fecha_inicio">Fecha Inicio</label>
+                                    <input type="text" class="form-control" name="fecha_inicio" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fecha_fin">Fecha Fin</label>
+                                    <input type="text" class="form-control" name="fecha_fin" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="capacidad">Capacidad</label>
+                                    <input type="text" class="form-control" name="capacidad" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="active">Active</label>
+                                    <input type="checkbox" class="form-check-input" name="active" >
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section th:fragment="listadoProductos" id="products">
+            <div class="container my-4">
+                <div class="row">
+                    <!-- Loop dinámico para generar productos -->
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="product : ${products}">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- Nombre del producto -->
+                                <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                                <!-- Descripción -->
+                                <p class="card-text" th:text="${product.description}">Product Description</p>
+                                <!-- Precio -->
+                                <p class="card-text"><strong th:text="'Price: $' + ${product.price}">Price</strong></p>
+                                <!-- Botones -->
+                                <a href="#" class="btn btn-primary">Add to cart</a>
+                                <a th:href="@{/product/eliminar/}+${product.id}" class="btn btn-danger">Delete</a>
+                                <a th:href="@{/product/modificar/}+${product.id}" class="btn btn-success">Modify</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- 4 Fragmento que se utiliza en la página modifca.html -->
+        <section th:fragment="editarProducto">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <form method="POST"
+                          th:action="@{/product/guardar}" 
+                          th:object="${product}"
+                          class="was-validated"                          
+                          enctype="multipart/form-data">
+                        <input type="hidden" name="id" th:field="*{id}"/>
+                        <section th:replace="~{product/fragmentos :: botonesEditar}"/>
+                        <div id=details>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4>Modify Product</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="name">Name</label>
+                                                    <input type="text" class="form-control" 
+                                                           name="name" th:field="*{name}"
+                                                           required="true">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="descripcion">Description</label>
+                                                    <input type="text" class="form-control" 
+                                                           name="description" th:field="*{description}"
+                                                           required="true">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="price">Price</label>
+                                                    <input type="text" class="form-control" 
+                                                           name="price" th:field="*{price}"
+                                                           required="true">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5 Fragmento que se utiliza en el fragmento anterior -->
+        <section th:fragment="botonesEditar">
+            <div class="container py-4 mb-4 bg-light">
+                <div class="row">
+                    <div class="col-md-4 d-grid">
+                        <a th:href="@{/product/listado}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                    </div>
+                    <div class="col-md-4 d-grid">                                
+                        <a th:href="@{/product/eliminar/}+${product.id}"
+                           class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                    <div class="col-md-4 d-grid">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
