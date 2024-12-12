@@ -7,7 +7,7 @@
         <title>Sala de Eventos</title>
     </head>
     <body>
-        <section th:fragment="botonesAgregar" class="py-4 mb-4 bg-light">
+        <section th:fragment="botonesAgregar" class="py-4 mb-4 bg-light" sec:authorize="hasRole('ROLE_ADMIN')">
             <div class="container">
                 <div class="row">
                     <div class="col-md-3">   
@@ -53,19 +53,15 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="fecha_inicio">Fecha Inicio</label>
-                                    <input type="text" class="form-control" name="fecha_inicio" required="true"/>
+                                    <input type="date" name="fecha_inicio" min="1900-01-01" max="2100-12-31" required="true">
                                 </div>
                                 <div class="mb-3">
                                     <label for="fecha_fin">Fecha Fin</label>
-                                    <input type="text" class="form-control" name="fecha_fin" required="true"/>
+                                    <input type="date" name="fecha_fin" min="1900-01-01" max="2100-12-31" required="true">
                                 </div>
                                 <div class="mb-3">
                                     <label for="capacidad">Capacidad</label>
                                     <input type="text" class="form-control" name="capacidad" required="true"/>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="active">Active</label>
-                                    <input type="checkbox" class="form-check-input" name="active" >
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -93,7 +89,10 @@
                                         name="addCar" onclick="addCard(this.form)" 
                                         type="button"><i class="fas fa-cart-plus"></i></button>
                             </form>
-                            <p class="card-text">[[${evento.descripcion}]]</p>                            
+                            <p class="card-text">[[${evento.descripcion}]]</p>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/evento/eliminar/}+${evento.id}"
+                                   class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> [[#{accion.eliminar}]]</a></td>                            
                         </div>
                     </div>
                 </div>
@@ -143,7 +142,7 @@
                                             <td class="text-center">[[${item.fecha_inicio}]]</td>
                                             <td class="text-center">[[${item.fecha_fin}]]</td>
                                             <td class="text-center">[[${item.capacidad}]]</td>
-                                            
+
                                         </tr>
                                     </tbody>
                                 </table>

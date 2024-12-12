@@ -46,7 +46,7 @@
                                     <input type="text" class="form-control" name="nombre" required="true"/>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="description">Description</label>
+                                    <label for="description">Descripcion</label>
                                     <input type="text" class="form-control" name="descripcion" required="true"/>
                                 </div>
                                 <div class="mb-3">
@@ -79,100 +79,100 @@
             </div>
         </section>
 
-        <section th:fragment="listadoProductos" id="products">
-            <div class="container my-4">
-                <div class="row">
-                    <!-- Loop dinámico para generar productos -->
-                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="product : ${products}">
-                        <div class="card">
-                            <div class="card-body">
-                                <!-- Nombre del producto -->
-                                <h5 class="card-title" th:text="${product.name}">Product Name</h5>
-                                <!-- Descripción -->
-                                <p class="card-text" th:text="${product.description}">Product Description</p>
-                                <!-- Precio -->
-                                <p class="card-text"><strong th:text="'Price: $' + ${product.price}">Price</strong></p>
-                                <!-- Botones -->
-                                <a href="#" class="btn btn-primary">Add to cart</a>
-                                <a th:href="@{/product/eliminar/}+${product.id}" class="btn btn-danger">Delete</a>
-                                <a th:href="@{/product/modificar/}+${product.id}" class="btn btn-success">Modify</a>
-                            </div>
+        <section th:fragment="listadoEventos" id="products">
+            <div class="container">
+                <div class="row row-cols-2" >
+                    <h2 class="inline">[[#{index.nuestrosProductos}]]</h2>
+                    <div id="resultsBlock"></div></div>
+                <div class="row row-cols-3" 
+                     th:if="${eventos != null and !eventos.empty}">
+                    <div class="card" th:each="evento : ${eventos}">
+                        <div class="card-body">
+                            <h5 class="card-title">[[${evento.nombre}]]</h5>
+                            <form>
+                                <input type="hidden" name="texto" th:value="${evento.id}"/>
+                                <input type="hidden" name="texto" th:value="${evento.nombre}"/>
+                                <button class="btn btn-ligth" id="addCar" 
+                                        name="addCar" onclick="addCard(this.form)" 
+                                        type="button"><i class="fas fa-cart-plus"></i></button>
+                            </form>
+                            <p class="card-text">[[${evento.descripcion}]]</p>                            
                         </div>
                     </div>
                 </div>
-            </div>
-
-        </section>
-
-
-        <!-- 4 Fragmento que se utiliza en la página modifca.html -->
-        <section th:fragment="editarProducto">
-            <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-8">
-                    <form method="POST"
-                          th:action="@{/product/guardar}" 
-                          th:object="${product}"
-                          class="was-validated"                          
-                          enctype="multipart/form-data">
-                        <input type="hidden" name="id" th:field="*{id}"/>
-                        <section th:replace="~{product/fragmentos :: botonesEditar}"/>
-                        <div id=details>
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h4>Modify Product</h4>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="name">Name</label>
-                                                    <input type="text" class="form-control" 
-                                                           name="name" th:field="*{name}"
-                                                           required="true">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="descripcion">Description</label>
-                                                    <input type="text" class="form-control" 
-                                                           name="description" th:field="*{description}"
-                                                           required="true">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="price">Price</label>
-                                                    <input type="text" class="form-control" 
-                                                           name="price" th:field="*{price}"
-                                                           required="true">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    </form>
-                </div>
+                <div th:if="${eventos == null or eventos.empty}">
+                    [[#{carrito.no_mostrar}]]</div>
             </div>
         </section>
 
-        <!-- 5 Fragmento que se utiliza en el fragmento anterior -->
-        <section th:fragment="botonesEditar">
-            <div class="container py-4 mb-4 bg-light">
+        <div th:fragment="verCarrito" th:unless="${#lists.isEmpty(listaItems)}">            
+            <form action="/carrito/listado">
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+                    <i class="fas fa-cart-plus"></i>
+                    Ver Reservas [[${listaTotal}]]
+                </button>
+            </form>
+        </div>     
+
+        <section th:fragment="listadoCarrito" id="items">
+            <div class="container">
                 <div class="row">
-                    <div class="col-md-4 d-grid">
-                        <a th:href="@{/product/listado}" class="btn btn-primary">
-                            <i class="fas fa-arrow-left"></i> Back
-                        </a>
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>Eventos Registrados</h4>
+                            </div>
+                            <div th:if="${items != null and !items.empty}">
+                                <table class="table table-stryped">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nombre</th>
+                                            <th>Descripcion</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Fin</th>
+                                            <th>Capcidad</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="item, contador : ${items}">
+                                            <td>[[${contador.count}]]</td>
+                                            <td>[[${item.nombre}]]</td>
+                                            <td class="text-end">[[${item.descripcion}]]</td>
+                                            <td class="text-center">[[${item.fecha_inicio}]]</td>
+                                            <td class="text-center">[[${item.fecha_fin}]]</td>
+                                            <td class="text-center">[[${item.capacidad}]]</td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center p-2" th:if="${items== null or items.empty}">
+                                [[#{carrito.no_mostrar}]]
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-4 d-grid">                                
-                        <a th:href="@{/product/eliminar/}+${product.id}"
-                           class="btn btn-danger">
-                            <i class="fas fa-trash"></i> Delete
-                        </a>
-                    </div>
-                    <div class="col-md-4 d-grid">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-check"></i> Save
-                        </button>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-primary text-white mb-3">
+                            <div class="card-body">
+                                <h3>Total de Eventos</h3>
+                                <h4 class="fs-4">
+                                    [[${carritoTotal}]]
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="card text-center bg-success text-white mb-3">
+                            <div class="card-body">
+                                <a th:href="@{/}"
+                                   class="btn btn-success">
+                                    <i class='fas fa-reply'></i> [[#{carrito.seguirComprando}]]
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -36,13 +36,13 @@ public class EventoController {
     @PostMapping("/guardar")
     public String eventoGuardar(Evento evento) {
         eventoService.save(evento);
-        return "redirect:/evento/listado";
+        return "redirect:/";
     }
 
     @GetMapping("/eliminar/{id}")
     public String eventoEliminar(Evento evento) {
         eventoService.delete(evento);
-        return "redirect:/evento/listado";
+        return "redirect:/";
     }
 
     @GetMapping("/modificar/{id}")

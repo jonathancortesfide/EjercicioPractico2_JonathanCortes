@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
-
+import org.springframework.format.annotation.DateTimeFormat;
 @Data
 @Entity
 @Table(name="eventos")
@@ -19,7 +19,9 @@ public class Evento implements Serializable {
     private String nombre;
     private String descripcion;
     private String tipo;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fecha_inicio;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fecha_fin;
     private int capacidad;
 
